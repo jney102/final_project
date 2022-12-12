@@ -3,3 +3,4 @@ numpydoc==1.4.0
 pandas==1.4.4
 plotly==5.9.0
 streamlit==1.15.2
+sklearn==0.0.post1
