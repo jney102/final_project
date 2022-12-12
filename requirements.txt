@@ -8,7 +8,6 @@ appscript @ file:///opt/concourse/worker/volumes/live/00049ed6-6263-4a6e-72b9-9d
 argon2-cffi @ file:///opt/conda/conda-bld/argon2-cffi_1645000214183/work
 argon2-cffi-bindings @ file:///opt/concourse/worker/volumes/live/42cf1b28-e71f-45ed-47b2-50f828088636/volume/argon2-cffi-bindings_1644569709119/work
 arrow @ file:///opt/conda/conda-bld/arrow_1649166651673/work
-b4dded6b289flor4xw5u/croots/recipe/astropy_1657786108950/work
 atomicwrites==1.4.0
 attrs @ file:///opt/conda/conda-bld/attrs_1642510447205/work
 Automat @ file:///tmp/build/80754af9/automat_1600298431173/work
