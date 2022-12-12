@@ -1,55 +1,92 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-st.markdown("Final Project")
-
-# 
-# ## Josh Ney
-# 
-# ### December 11, 2022
-# ---
-
 import streamlit as st
 import pandas as pd
 import numpy as np
 import altair as alt
+import plotly.graph_objects as go
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
+st.title("Predicting LinkedIn Users with Machine Learning")
+st.subheader("Final Project Georgetown MSBA Programming II")
+st.subheader("Created by: Josh Ney")
+st.markdown("---")
 
-# #### Q1
-import os
+st.markdown("**Fill out the questions on the left to determine who is likely to be a LinkedIn User!**")
+st.text(" \n")
 
-os.chdir('/Users/joshuaney/Desktop/Georgetown/Fall2022/OPIM-607-201/FinalProject')
+#### Text input box
+#### text_income = st.text_input("Enter text:", value_income = "Enter text here")
+
+with st.sidebar:
+    inc = st.number_input("Income (low=1 to high=9)", 1, 9)
+    deg = st.number_input("College degree? (no=0 to yes=1)", 0, 1)
+    par = st.number_input("Parent? (no=0 to yes=1)", 0, 1)
+    mar = st.number_input("Married? (0=no, 1=yes)", 0, 1)
+    gen = st.number_input("Female? (0=no, 1=yes)", 0, 1)
+    age = st.number_input("Age:", 1, 120)
+
+# # Create labels from numeric inputs
+
+# Income
+if inc <= 3:
+    inc_label = "low income"
+elif inc > 3 and inc < 7:
+    inc_label = "middle income"
+else:
+    inc_label = "high income"
+
+# Degree   
+if deg == 1:
+    deg_label = "college graduate"
+else:
+    deg_label = "non-college graduate"
+
+# Parent   
+if par == 1:
+    par_label = "parent"
+else:
+    par_label = "non-parent"
+
+# Marital
+if mar == 1:
+    mar_label = "married"
+else:
+    mar_label = "non-married"
+
+# Gender  
+if gen == 1:
+    gen_label = "female"
+else:
+    gen_label = "not a female"
+
+# Age  
+if age == 0:
+    age_label = "error"
+else:
+    age_label = age
+
+
+st.write(f"This person is {age_label} years old, {gen_label}, {mar_label}, a {par_label}, a {deg_label}, and in the {inc_label} bracket.")
+
+
 
 s = pd.read_csv("social_media_usage.csv")
-print(s.shape) # Check dimensions
-
-
-# ---
-# #### Q2
+print(s.shape)
 
 
 def clean_sm(x):
     x = np.where(x == 1, 1, 0)
     return x
 
-
-
-# Data frame to test the function
-toy_data = [["a",1], ["b",2], ["c",0]]
-toy_df = pd.DataFrame(toy_data, columns = ['Test', 'Data'])
-print(toy_df)
-
-
-
-clean_sm(toy_df["Data"]) # test works
-
-
-# ---
-# #### Q3
+# toy_data = [["a",1], ["b",2], ["c",0]]
+# toy_df = pd.DataFrame(toy_data, columns = ['Test', 'Data'])
+# print(toy_df)
+# clean_sm(toy_df["Data"])
 
 # Clean data
 ss = pd.DataFrame({
@@ -65,42 +102,28 @@ ss = pd.DataFrame({
 
 clean_sm(ss["sm_li"])
 
-ss
-
+#ss
 
 ss.isnull().sum()
 
-
 # Drop all missing data
 ss_clean = ss.dropna()
-
-
 
 ss_clean.isnull().sum() # check to ensure missing values were dropped
 
 
 
 # Exploratory analysis - swapped x variables in and out to view how the features were related to the target
-alt.Chart(title = "Exploratory Analysis of LinkedIn Data", data = ss_clean.groupby(["income", "education"],     as_index=False)["sm_li"].mean()).     mark_circle().encode(
-        x="income",
-        y="sm_li",
-        color="education:N").configure_axis(
-        titleFontSize=14
-    )
-
-
-# ---
-# #### Q4
-
+# alt.Chart(title = "Exploratory Analysis of LinkedIn Data", data = ss_clean.groupby(["income", "education"],     as_index=False)["sm_li"].mean()).     mark_circle().encode(
+#        x="income",
+#        y="sm_li",
+#        color="education:N").configure_axis(
+#        titleFontSize=14
+#    )
 
 # Target (y) and feature set (x)
 y = ss_clean["sm_li"]
 x = ss_clean[["income", "education", "parent", "married", "female", "age"]]
-
-
-# ---
-# #### Q5
-
 
 
 # Split data into training and test set
@@ -116,23 +139,11 @@ x_train, x_test, y_train, y_test = train_test_split(x,
 # y_test contains 20% of the data and contains the target we will predict when testing the model on unseen data to evaluate performance.
 
 
-# ---
-# #### Q6
-
-
 # Initialize algorithm for the logistic regression with class_weight set to balanced
 lr = LogisticRegression(class_weight = "balanced")
 
-
 # Fit algorithm to training data
 lr.fit(x_train, y_train)
-
-
-# ---
-# #### Q7
-# 
-# The accuracy of the model is 70%
-
 
 
 # Make predictions using the model and the testing data
@@ -149,14 +160,11 @@ round((113 + 63) / (113 + 55 + 21 + 63),1)
 print(classification_report(y_test, y_pred))
 
 
-# ---
-# #### Q8
-
 # Comparing those predictions to the actual test data using a confusion matrix (positive class=1)
 
 pd.DataFrame(confusion_matrix(y_test, y_pred),
-             columns=["Predicted Negative", "Predicted Positive"],
-             index=["Actual Negative","Actual Positive"]).style.background_gradient(cmap="PiYG")
+            columns=["Predicted Negative", "Predicted Positive"],
+            index=["Actual Negative","Actual Positive"]).style.background_gradient(cmap="PiYG")
 
 
 # The confusion matrix above depicts the accuracy of the model. 
@@ -174,58 +182,45 @@ pd.DataFrame(confusion_matrix(y_test, y_pred),
 
 
 # Precision: TP/(TP+FP)
-precision = 63/(63+55)
-precision
-
-
+#precision = 63/(63+55)
+#precision
 
 # Recall: TP/(TP+FN)
-recall = 63/(63+21)
-recall
-
+#recall = 63/(63+21)
+#recall
 
 # F1 Score
-f1_score = 2 * (precison * recall)/(precision + recall)
-f1_score
-
-
+#f1_score = 2 * (precision * recall)/(precision + recall)
+#f1_score
 
 # Checking work with a classificaiton_report
-print(classification_report(y_test, y_pred))
-
-
-# ---
-# #### Q10
-# Making Predictions
+#print(classification_report(y_test, y_pred))
 
 
 # First, checking with a dataframe
 
 # New data for predictions
-newdata = pd.DataFrame({
-    "income": [8], # high income = 8
-    "education": [7], # high level of education = 7
-    "parent": [0], # not a parent = 0
-    "married": [1], # married
-    "female": [1], # is a female (females are depicted by 1's per Q3)
-    "age": [42] # 42 years-old
-})
+#newdata = pd.DataFrame({
+#    "income": [8], # high income = 8
+#    "education": [7], # high level of education = 7
+#    "parent": [0], # not a parent = 0
+#   "married": [1], # married
+#    "female": [1], # is a female (females are depicted by 1's per Q3)
+#    "age": [42] # 42 years-old
+#})
 
-
-newdata
-
+#newdata
 
 # Use model to make predictions
-newdata["sm_li"] = lr.predict(newdata)
+#newdata["sm_li"] = lr.predict(newdata)
+
+#newdata
 
 
-newdata
-
-
-# 42 year-old prediction with a probability
+# Prediction and probability
 
 # New data for features: "income", "education", "parent", "married", "female", "age"
-person = [8, 7, 0, 1, 1, 42]
+person = [inc, deg, par, mar, gen, age]
 
 # Predict class, given input features
 predicted_class = lr.predict([person])
@@ -233,36 +228,30 @@ predicted_class = lr.predict([person])
 # Generate probability of positive class (=1)
 probs = lr.predict_proba([person])
 
-# Warning is saying I used feature names originally, but not this time. It is okay, still ran as intended
+probs_num = float(probs[:, 1])
+probs_num2 = "{0:.1%}".format(probs_num)
+
+st.write(f"Predicted class (0 = Not a LinkedIn User; 1 = LinkedIn User): **{predicted_class[0]}**")
+st.write(f"Probability this person is a LinkedIn User: ", probs_num2)
 
 
 # Print predicted class and probability
-print(f"Predicted class: {predicted_class[0]}") # 0 = Not a LinkedIN user, 1 = A LinkedIn user
-print(f"Probability that this person is a LinkedIn user: {probs[0][1]}")
+#print(f"Predicted class: {predicted_class[0]}") # 0 = Not a LinkedIN user, 1 = A LinkedIn user
+#print(f"Probability that this person is a LinkedIn user: {probs[0][1]}")
 
 
-# 82 year-old prediction with a probability
+#### Sentiment Gauge
+fig = go.Figure(go.Indicator(
+    mode = "gauge+number",
+    value = probs_num,
+    title = "Probability Gauge of if Someone is a LinkedIn User",
+    gauge = {"axis": {"range": [0, 1]},
+        "steps": [
+            {"range": [0, 0.33], "color": "red"},
+            {"range": [0.33, 0.66], "color": "gray"},
+            {"range": [0.66, 1], "color": "lightgreen"}
+        ],
+        "bar": {"color":"yellow"}}
+))
 
-# New data for features: "income", "education", "parent", "married", "female", "age"
-person2 = [8, 7, 0, 1, 1, 82]
-
-# Predict class, given input features
-predicted_class2 = lr.predict([person2])
-
-# Generate probability of positive class (=1)
-probs2 = lr.predict_proba([person2])
-
-# Warning is saying I used feature names originally, but not this time. It is okay, still ran
-
-
-
-# Print predicted class and probability
-print(f"Predicted class: {predicted_class2[0]}") # 0 = Not a LinkedIN user, 1 = A LinkedIn user
-print(f"Probability that this person is a LinkedIn user: {probs2[0][1]}")
-
-
-# Probability delta - how the probability changed between the 42 and 82 year-old people
-probs-probs2
-
-
-# **The probability of a person being a LinkedIn user decreased by 24.8% when the age of the person increased from 42 to 82 years-old keeping everything else the same - ceteris paribus.**
+st.plotly_chart(fig)
