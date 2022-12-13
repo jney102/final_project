@@ -16,15 +16,48 @@ st.subheader("Final Project Georgetown MSBA Programming II")
 st.subheader("Created by: Josh Ney")
 st.markdown("---")
 
-st.markdown("**Fill out the questions on the left to determine who is likely to be a LinkedIn User!**")
+st.subheader("**Fill out the questions on the left to determine who is likely to be a LinkedIn User!**")
+st.text("Additional variable information below")
+
+st.markdown("---")
+st.markdown("**Income Variable Information**")
 st.text(" \n")
 
+st.text("1: Less than $10,000")
+st.text("2: 10 to under $20,000")
+st.text("3: 20 to under $30,000")
+st.text("4: 30 to under $40,000")
+st.text("5: 40 to under $50,000")
+st.text("6: 50 to under $75,000")
+st.text("7: 75 to under $100,000")
+st.text("8: 100 to under $150,000")
+st.text("9: $150,000 or more")
+	
+st.text(" \n")
+st.text(" \n")
+
+st.markdown("**Eduction Variable Information**")
+st.text(" \n")
+
+st.text("1: Less than high school (Grades 1-8 or no formal schooling)")
+st.text("2: High school incomplete (Grades 9-11 or Grade 12 with NO diploma)")
+st.text("3: High school graduate (Grade 12 with diploma or GED certificate)")
+st.text("4: Some college, no degree (includes some community college)")
+st.text("5: Two-year associate degree from a college or university")
+st.text("6: Four-year college or university degree/Bachelor’s degree (e.g., BS, BA, AB)")
+st.text("7: Some postgraduate or professional schooling, no postgraduate degree (e.g. some graduate school)")
+st.text("8: Postgraduate or professional degree, including master’s, doctorate, medical or law degree (e.g., MA, MS, PhD, MD, JD)")
+
+st.text(" \n")
+st.markdown("---")
 #### Text input box
 #### text_income = st.text_input("Enter text:", value_income = "Enter text here")
 
 with st.sidebar:
     inc = st.number_input("Income (low=1 to high=9)", 1, 9)
-    deg = st.number_input("College degree? (no=0 to yes=1)", 0, 1)
+    deg = st.selectbox(
+        "Education",
+        (1,2,3,4,5,6,7,8))
     par = st.number_input("Parent? (no=0 to yes=1)", 0, 1)
     mar = st.number_input("Married? (0=no, 1=yes)", 0, 1)
     gen = st.number_input("Female? (0=no, 1=yes)", 0, 1)
@@ -33,18 +66,32 @@ with st.sidebar:
 # # Create labels from numeric inputs
 
 # Income
-if inc <= 3:
+if inc <= 4:
     inc_label = "low income"
-elif inc > 3 and inc < 7:
+elif inc > 4 and inc < 7:
     inc_label = "middle income"
 else:
     inc_label = "high income"
 
 # Degree   
 if deg == 1:
-    deg_label = "college graduate"
+    deg_label = "less than high school (Grades 1-8 or no formal schooling)"
+elif deg == 2:
+    deg_label = "high school incomplete (Grades 9-11 or Grade 12 with NO diploma)"
+elif deg == 3:
+    deg_label = "high school graduate (Grade 12 with diploma or GED certificate)"
+elif deg == 4:
+    deg_label = "some college, no degree (includes some community college)"
+elif deg == 5:
+    deg_label = "two-year associate degree from a college or university"
+elif deg == 6:
+    deg_label = "four-year college or university degree/Bachelor’s degree (e.g., BS, BA, AB)"
+elif deg == 7:
+    deg_label = "some postgraduate or professional schooling, no postgraduate degree (e.g. some graduate school)"
+elif deg == 8:
+    deg_label = "postgraduate or professional degree, including master’s, doctorate, medical or law degree (e.g., MA, MS, PhD, MD, JD)"
 else:
-    deg_label = "non-college graduate"
+    deg_label = "N/A"
 
 # Parent   
 if par == 1:
@@ -71,7 +118,7 @@ else:
     age_label = age
 
 
-st.write(f"This person is {age_label} years old, {gen_label}, {mar_label}, a {par_label}, a {deg_label}, and in the {inc_label} bracket.")
+st.write(f"This person is {age_label} years-old, {gen_label}, {mar_label}, a {par_label}, with {deg_label}, and in the {inc_label} bracket.")
 
 
 
@@ -231,8 +278,10 @@ probs = lr.predict_proba([person])
 probs_num = float(probs[:, 1])
 probs_num2 = "{0:.1%}".format(probs_num)
 
-st.write(f"Predicted class (0 = Not a LinkedIn User; 1 = LinkedIn User): **{predicted_class[0]}**")
-st.write(f"Probability this person is a LinkedIn User: ", probs_num2)
+st.write(f"**Predicted class (0 = Not a LinkedIn User; 1 = LinkedIn User):**") 
+st.subheader(predicted_class[0])
+st.write(f"**Probability this person is a LinkedIn User:**")
+st.subheader(probs_num2)
 
 
 # Print predicted class and probability
